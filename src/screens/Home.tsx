@@ -33,14 +33,45 @@ export default function Home() {
         {
           closeButton: false,
           position: "top-right",
-          autoClose: 1500,
+          autoClose: 2000,
           theme: "light",
         }
       );
 
       await promise;
+
+      const removeCancellationFiles = new Promise<void>((resolve) => {
+        let delay = 0;
+        [...cancelletionFile].forEach((file) => {
+          setTimeout(() => {
+            const element = document.getElementById(`file-${file.name}`);
+            if (element) {
+              element.style.animation = 'slideOut 0.3s ease-out forwards';
+            }
+          }, delay);
+          delay += 100; 
+        });
+        setTimeout(resolve, delay + 300); 
+      });
+
+      const removeBookingFiles = new Promise<void>((resolve) => {
+        let delay = 0;
+        [...bookingFiles].forEach((file) => {
+          setTimeout(() => {
+            const element = document.getElementById(`file-${file.name}`);
+            if (element) {
+              element.style.animation = 'slideOut 0.3s ease-out forwards';
+            }
+          }, delay);
+          delay += 100; 
+        });
+        setTimeout(resolve, delay + 300); 
+      });
+      await Promise.all([removeCancellationFiles, removeBookingFiles]);
+      
       setBookingFiles([]);
       setCancelletionFile([]);
+
     } catch (error) {
       console.error("File upload error:", error);
     } finally {

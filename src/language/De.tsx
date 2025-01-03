@@ -1,5 +1,5 @@
 const LANG={
-    Search:"Ara",
+    Language:"Sprache",
    
 }
 export default LANG;

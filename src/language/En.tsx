@@ -1,5 +1,5 @@
 const LANG={
-    Search:"Search",
+    Language:"Language",
     
 }
 export default LANG;

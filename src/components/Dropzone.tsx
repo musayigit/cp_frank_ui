@@ -30,6 +30,47 @@ const acceptStyle = {
 const rejectStyle = {
   borderColor: "#ff1744",
 };
+
+const fileListContainerStyle: React.CSSProperties = {
+  transition: 'all 0.3s ease-in-out',
+  maxHeight: '300px',
+  overflowY: 'auto',
+  msOverflowStyle: 'none',
+  scrollbarWidth: 'none',
+};
+
+const fileItemStyle = {
+  animation: 'slideIn 0.3s ease-out forwards',
+};
+
+const keyframesStyle = `
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+      max-height: 50px;
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-20px);
+      max-height: 0;
+      margin: 0;
+      padding: 0;
+    }
+  }
+`;
+
 interface FileInputProps {
     acceptedFileTypes: string;
     bottomInfo: string;
@@ -51,7 +92,13 @@ function FileInput({acceptedFileTypes, bottomInfo,fileListExternal,uploadFile,re
     });
 
   const removeFile = (fileToRemove: File) => {
-    removeFileExternal(fileToRemove);
+    const element = document.getElementById(`file-${fileToRemove.name}`);
+    if (element) {
+      element.style.animation = 'slideOut 0.3s ease-out forwards';
+      setTimeout(() => {
+        removeFileExternal(fileToRemove);
+      }, 280);
+    }
   };
 
   
@@ -68,6 +115,18 @@ function FileInput({acceptedFileTypes, bottomInfo,fileListExternal,uploadFile,re
 
   return (
     <div className="container">
+      <style>
+        {keyframesStyle}
+        {`
+          .file-list-container::-webkit-scrollbar {
+            display: none;
+          }
+          .file-list-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}
+      </style>
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
         <p>Drag files here or click in this area.</p>
@@ -78,28 +137,35 @@ function FileInput({acceptedFileTypes, bottomInfo,fileListExternal,uploadFile,re
           {bottomInfo}
         </span>
       </div>
-      <aside>
-        <ul>{fileListExternal.map((file) => (
-          <li
-          key={file.name}
-          className="flex items-center mb-2 p-2 bg-gray-100 rounded 
-                     opacity-100 transform transition-all duration-300 ease-in-out
-                     animate-fade-in"
-        >
-          <span className="flex-1">{file.name}</span>
-          <button
-            onClick={() => removeFile(file)}
-            style={{
-              backgroundColor: AppMainColor,
-            }}
-            className={`ml-2.5 px-2 py-1 text-white rounded
-                       transition-transform duration-200 ease-in-out
-                       hover:scale-110 active:scale-95`}
-          >
-            ✕
-          </button>
-        </li>
-        ))}</ul>
+      <aside 
+        className="file-list-container"
+        style={fileListContainerStyle}
+      >
+        <ul className="space-y-2">
+          {fileListExternal.map((file) => (
+            <li
+              id={`file-${file.name}`}
+              key={file.name}
+              style={fileItemStyle}
+              className="flex items-center p-2 bg-gray-100 rounded 
+                         hover:bg-gray-200 transition-all duration-200"
+            >
+              <span className="flex-1 truncate">{file.name}</span>
+              <button
+                onClick={() => removeFile(file)}
+                style={{
+                  backgroundColor: AppMainColor,
+                }}
+                className="ml-2.5 px-2 py-1 text-white rounded
+                           transition-all duration-200 ease-in-out
+                           hover:scale-110 active:scale-95
+                           focus:outline-none focus:ring-2 focus:ring-offset-2"
+              >
+                ✕
+              </button>
+            </li>
+          ))}
+        </ul>
       </aside>
     </div>
   );

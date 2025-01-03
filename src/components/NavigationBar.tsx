@@ -59,24 +59,30 @@ export default function NavigationBar() {
         </div>
       </div>
 
-      <DisclosurePanel className="sm:hidden">
-        <div className="space-y-1 px-2 pb-3 pt-2">
-          {navigation.map((item) => (
-            <DisclosureButton
-              key={item.name}
-              as="a"
-              href={item.href}
-              aria-current={item.current ? 'page' : undefined}
-              style={{color:'#425B76'}}
-              className={classNames(
-                item.current ? 'underline-offset-4 underline' : 'hover:underline-offset-4 hover:underline',
-                'block rounded-md px-3 py-2 text-base font-medium',
-              )}
-            >
-              {item.name}
-            </DisclosureButton>
-          ))}
-        </div>
+      <DisclosurePanel className="sm:hidden transition-all duration-300 ease-in-out transform origin-top">
+        {({ open }) => (
+          <div className={`space-y-1 px-2 pb-3 pt-2 
+            ${open ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'}
+            transition-all duration-300 ease-in-out transform origin-top`}
+          >
+            {navigation.map((item) => (
+              <DisclosureButton
+                key={item.name}
+                as="a"
+                href={item.href}
+                aria-current={item.current ? 'page' : undefined}
+                style={{color:'#425B76'}}
+                className={classNames(
+                  item.current ? 'underline-offset-4 underline' : 'hover:underline-offset-4 hover:underline',
+                  'block rounded-md px-3 py-2 text-base font-medium',
+                  'transition-all duration-200 ease-in-out'
+                )}
+              >
+                {item.name}
+              </DisclosureButton>
+            ))}
+          </div>
+        )}
       </DisclosurePanel>
     </Disclosure>
   )
