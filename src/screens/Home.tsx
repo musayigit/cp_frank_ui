@@ -4,30 +4,62 @@ import ChatBubble from "../components/ChatBubble";
 import FileInput from "../components/Dropzone";
 import Layout from "../components/Layout";
 import { AppMainColor } from "../Static";
+import { UploadFiles } from "../api/services";
+import { toast } from "react-toastify";
 export default function Home() {
-  const [bookingFiles,setBookingFiles] = useState([] as File[]);
-  const [cancelletionFile,setCancelletionFile] = useState([] as File[]);
+  const [bookingFiles, setBookingFiles] = useState([] as File[]);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [cancelletionFile, setCancelletionFile] = useState([] as File[]);
   function nowhere() {
     location.reload();
   }
   function submitForm() {
     console.log("submitForm");
-    console.log("cancelletionFile",cancelletionFile);
-    console.log("bookingFiles",bookingFiles);
+    handleUpload();
+  }
+  async function handleUpload() {
+    setSubmitLoading(true);
+    
+    try {
+      const promise = UploadFiles(cancelletionFile, bookingFiles);
+      
+      toast.promise(
+        promise,
+        {
+          pending: "Wait",
+          success: "Files uploaded 👌",
+          error: "Files not uploaded 🤯",
+        },
+        {
+          closeButton: false,
+          position: "top-right",
+          autoClose: 1500,
+          theme: "light",
+        }
+      );
+
+      await promise;
+      setBookingFiles([]);
+      setCancelletionFile([]);
+    } catch (error) {
+      console.error("File upload error:", error);
+    } finally {
+      setSubmitLoading(false);
+    }
   }
   function uploadBookingFile(files: File[]) {
     setBookingFiles((prev) => [...prev, ...files]);
   }
-  function removeBookingFile(file:File) {
-    setBookingFiles((prev) => prev.filter(f => f !== file));
+  function removeBookingFile(file: File) {
+    setBookingFiles((prev) => prev.filter((f) => f !== file));
   }
   function uploadCancelletionFile(files: File[]) {
     setCancelletionFile((prev) => [...prev, ...files]);
   }
-  function removeCancelletionFile(file:File) {
-    setCancelletionFile((prev) => prev.filter(f => f !== file));
+  function removeCancelletionFile(file: File) {
+    setCancelletionFile((prev) => prev.filter((f) => f !== file));
   }
-  
+
   return (
     <Layout>
       <div className="w-full absolute inset-x-0 start-0 overflow-hidden">
@@ -149,7 +181,13 @@ export default function Home() {
               <h4 className="text-[14px] sm:text-[15px]">
                 Booking confirmation
               </h4>
-              <FileInput acceptedFileTypes="application/pdf" fileListExternal={bookingFiles} uploadFile={uploadBookingFile} removeFileExternal={removeBookingFile} bottomInfo="The booking confirmation or invoice for the booking (pdf)." />
+              <FileInput
+                acceptedFileTypes="application/pdf"
+                fileListExternal={bookingFiles}
+                uploadFile={uploadBookingFile}
+                removeFileExternal={removeBookingFile}
+                bottomInfo="The booking confirmation or invoice for the booking (pdf)."
+              />
             </div>
             <div className="w-full flex flex-col items-start justify-center mt-4">
               <h4 className="text-start text-[14px] sm:text-[15px]">
@@ -188,10 +226,10 @@ export default function Home() {
         >
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-center gap-2">
             <Button text="Back to website" onClick={nowhere} />
-            <Button text="Check another flight" onClick={nowhere} />
+            <Button text="Check another flight" onClick={nowhere}/>
           </div>
           <div>
-            <Button text="Submit" onClick={submitForm} />
+            <Button text="Submit" onClick={submitForm} disabled={submitLoading} />
           </div>
         </div>
       </div>

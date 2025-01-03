@@ -1,10 +1,10 @@
-import React from "react";
 
 interface ButtonProps {
   text: string;
   textColor?: string;
   backgroundColor?: string;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 export default function Button({
@@ -12,11 +12,13 @@ export default function Button({
     textColor = "white",  // default değer
     backgroundColor = "gray-600",
     onClick,
+    disabled = false,
 }: ButtonProps) {
   return (
     <button
     onClick={onClick}
-      className={`bg-${backgroundColor} text-${textColor} px-4 py-2 rounded-3xl w-30 text-[14px] sm:text-[15px]`}
+    disabled={disabled}
+      className={`bg-${backgroundColor} text-${textColor} px-4 py-2 rounded-3xl w-30 text-[14px] sm:text-[15px] ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       {text}
     </button>
