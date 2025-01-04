@@ -19,10 +19,10 @@ export default function Home() {
   }
   async function handleUpload() {
     setSubmitLoading(true);
-    
+
     try {
       const promise = UploadFiles(cancelletionFile, bookingFiles);
-      
+
       toast.promise(
         promise,
         {
@@ -46,12 +46,12 @@ export default function Home() {
           setTimeout(() => {
             const element = document.getElementById(`file-${file.name}`);
             if (element) {
-              element.style.animation = 'slideOut 0.3s ease-out forwards';
+              element.style.animation = "slideOut 0.3s ease-out forwards";
             }
           }, delay);
-          delay += 100; 
+          delay += 100;
         });
-        setTimeout(resolve, delay + 300); 
+        setTimeout(resolve, delay + 300);
       });
 
       const removeBookingFiles = new Promise<void>((resolve) => {
@@ -60,18 +60,17 @@ export default function Home() {
           setTimeout(() => {
             const element = document.getElementById(`file-${file.name}`);
             if (element) {
-              element.style.animation = 'slideOut 0.3s ease-out forwards';
+              element.style.animation = "slideOut 0.3s ease-out forwards";
             }
           }, delay);
-          delay += 100; 
+          delay += 100;
         });
-        setTimeout(resolve, delay + 300); 
+        setTimeout(resolve, delay + 300);
       });
       await Promise.all([removeCancellationFiles, removeBookingFiles]);
-      
+
       setBookingFiles([]);
       setCancelletionFile([]);
-
     } catch (error) {
       console.error("File upload error:", error);
     } finally {
@@ -190,18 +189,34 @@ export default function Home() {
         style={{ backgroundColor: "#f8f8f8" }}
       >
         <div className="w-full flex flex-col items-center justify-center">
-          <div
-            className="flex flex-col items-center justify-center px-2 lg:px-3 h-[75px] lg:h-[200px] w-full rounded-tl-3xl rounded-tr-3xl [border-bottom-left-radius:30px] lg:[border-bottom-left-radius:80px] [border-bottom-right-radius:30px] lg:[border-bottom-right-radius:80px]"
-            style={{
-              backgroundColor: AppMainColor,
-            }}
-          >
-            <ChatBubble
-              avatar="https://ik.imagekit.io/0adjo0tl4/Mask%20group.svg"
-              message="Welcome to your claim."
-              isSender={false}
-            />
+          <div className="relative h-[100px] lg:h-[150px] w-full flex flex-col items-center justify-center">
+            <div
+              className="px-2 lg:px-3 h-[100px] w-full lg:h-[150px] flex flex-col items-center justify-center"
+            >
+              <svg
+                className="absolute bottom-0 left-0 w-full h-full rounded-tr-3xl rounded-tl-3xl"
+                preserveAspectRatio="none"
+                viewBox="0 0 100 100"
+                style={{
+                  filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.1))"
+                }}
+              >
+                <path
+                  d="M0 0 L100 0 L100 65 Q95 90 90 100 L5 100 Q2 85 0 60 Z"
+                  fill={AppMainColor}
+                />
+              </svg>
+
+              <div className="relative z-10 pb-5" style={{ width: "96%" }}>
+                <ChatBubble
+                  avatar="https://ik.imagekit.io/0adjo0tl4/Mask%20group.svg"
+                  message="Welcome to your claim."
+                  isSender={false}
+                />
+              </div>
+            </div>
           </div>
+          <hr className="w-full border-gray-300" />
           <div className="w-full flex flex-col items-center justify-center px-2 lg:px-3">
             <ChatBubble
               avatar="https://ik.imagekit.io/0adjo0tl4/Mask%20group.svg"
@@ -257,10 +272,14 @@ export default function Home() {
         >
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-center gap-2">
             <Button text="Back to website" onClick={nowhere} />
-            <Button text="Check another flight" onClick={nowhere}/>
+            <Button text="Check another flight" onClick={nowhere} />
           </div>
           <div>
-            <Button text="Submit" onClick={submitForm} disabled={submitLoading} />
+            <Button
+              text="Submit"
+              onClick={submitForm}
+              disabled={submitLoading}
+            />
           </div>
         </div>
       </div>

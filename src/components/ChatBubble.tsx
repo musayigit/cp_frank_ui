@@ -12,12 +12,36 @@ interface ChatBubbleProps {
 export default function ChatBubble({ message, avatar, isSender, hasLink, link, bubbleColorIsGreen }: ChatBubbleProps) {
     const [copied, setCopied] = useState(false);
   
-    const handleCopy = () => {
-      if (link) {
-        navigator.clipboard.writeText(link).then(() => {
+    const handleCopy = async () => {
+      if (!link) return;
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(link);
           setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        });
+        } else {
+          const textArea = document.createElement("textarea");
+          textArea.value = link;
+          textArea.style.position = "fixed";
+          textArea.style.left = "-999999px";
+          textArea.style.top = "-999999px";
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+
+          try {
+            document.execCommand('copy');
+            textArea.remove();
+            setCopied(true);
+          } catch (err) {
+            console.error('Copy failed:', err);
+            textArea.remove();
+            return;
+          }
+        }
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error('Copy failed:', err);
       }
     };
   return (
